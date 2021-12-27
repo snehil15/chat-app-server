@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://snehil15.github.io/chat-app/",
+    origin: "https://snehil15.github.io/chat-app",
     methods: ["GET", "POST"],
   },
 });
