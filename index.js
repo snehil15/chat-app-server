@@ -20,11 +20,11 @@ const io = new Server(server, {
   },
 });
 
-io.users = [];
+var users = {};
 
 io.on("connection", (socket) => {
   socket.on("join_room", ({ room, username }) => {
-    io.users.push({ id: socket.id, username, rooms: socket.rooms });
+    users[socket.id] = { username, rooms: socket.rooms };
     socket.join(room);
     socket.to(room).emit("user_joined", username);
     // console.log(`User with ID: ${socket.id} joined room ${room}`);
@@ -39,13 +39,12 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("user_left", data.username);
   });
 
-  socket.on("disconnect", async () => {
-    io.users.forEach((user, index) => {
-      if (!io.sockets.adapter.socketRooms(user.id)) {
-        socket.to(Array.from(user.rooms)).emit("user_left", user.username);
-        io.users.splice(index, 1);
-      }
-    });
+  socket.on("disconnecting", () => {
+    if (users[socket.id])
+      socket
+        .to(Array.from(users[socket.id].rooms))
+        .emit("user_left", users[socket.id].username);
+    delete users[socket.id];
   });
 });
 
