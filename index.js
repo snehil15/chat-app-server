@@ -22,12 +22,14 @@ const io = new Server(server, {
 
 var users = {};
 
+var canvasData = "";
+
 io.on("connection", (socket) => {
   socket.on("join_room", ({ room, username }) => {
     users[socket.id] = { username, rooms: socket.rooms };
     socket.join(room);
+    socket.emit("get_canvas_data", { canvasData: canvasData, id: socket.id });
     socket.to(room).emit("user_joined", username);
-    // console.log(`User with ID: ${socket.id} joined room ${room}`);
   });
 
   socket.on("send_message", (data) => {
@@ -40,7 +42,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("drawing", ({ canvasState, room }) => {
-    socket.broadcast.to(room).emit("update_canvas", { canvasState });
+    canvasData = canvasState;
+    socket.to(room).emit("update_canvas", { canvasState, id: socket.id });
   });
 
   socket.on("disconnecting", () => {
@@ -52,21 +55,21 @@ io.on("connection", (socket) => {
   });
 });
 
-const tictactoeio = io.of("/tictac");
+// const tictactoeio = io.of("/tictac");
 
-tictactoeio.on("connection", (socket) => {
-  // console.log(socket.id);
-  socket.on("join_room", async () => {
-    if (
-      tictactoeio.adapter.rooms.get("abc") &&
-      tictactoeio.adapter.rooms.get("abc").size >= 2
-    ) {
-      return;
-    }
-    socket.join("abc");
-    // console.log(`user with id ${socket.id} joined room abc`);
-  });
-});
+// tictactoeio.on("connection", (socket) => {
+//   // console.log(socket.id);
+//   socket.on("join_room", async () => {
+//     if (
+//       tictactoeio.adapter.rooms.get("abc") &&
+//       tictactoeio.adapter.rooms.get("abc").size >= 2
+//     ) {
+//       return;
+//     }
+//     socket.join("abc");
+//     // console.log(`user with id ${socket.id} joined room abc`);
+//   });
+// });
 
 server.listen(port, () => {
   console.log("Server running");
