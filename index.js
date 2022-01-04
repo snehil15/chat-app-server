@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
 const tictactoeio = io.of("/tictac");
 
 tictactoeio.on("connection", (socket) => {
-  console.log(socket.id);
+  // console.log(socket.id);
   socket.on("join_room", async () => {
     if (
       tictactoeio.adapter.rooms.get("abc") &&
@@ -64,7 +64,7 @@ tictactoeio.on("connection", (socket) => {
       return;
     }
     socket.join("abc");
-    console.log(`user with id ${socket.id} joined room abc`);
+    // console.log(`user with id ${socket.id} joined room abc`);
   });
 });
 
