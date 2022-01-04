@@ -39,6 +39,10 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("user_left", data.username);
   });
 
+  socket.on("drawing", ({ canvasState, room }) => {
+    socket.broadcast.to(room).emit("update_canvas", { canvasState });
+  });
+
   socket.on("disconnecting", () => {
     if (users[socket.id])
       socket
