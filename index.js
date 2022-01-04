@@ -22,7 +22,7 @@ const io = new Server(server, {
 
 var users = {};
 
-var canvasData = "";
+var canvasData = [];
 
 io.on("connection", (socket) => {
   socket.on("join_room", ({ room, username }) => {
@@ -41,9 +41,13 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("user_left", data.username);
   });
 
-  socket.on("drawing", ({ canvasState, room }) => {
-    canvasData = canvasState;
-    socket.to(room).emit("update_canvas", { canvasState, id: socket.id });
+  socket.on("drawing", ({ updatedState, room }) => {
+    JSON.parse(updatedState).lines.length == 0
+      ? (canvasData = [updatedState])
+      : canvasData.push(updatedState);
+    socket.volatile
+      .to(room)
+      .emit("update_canvas", { canvasData: canvasData, id: socket.id });
   });
 
   socket.on("disconnecting", () => {
