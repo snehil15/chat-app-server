@@ -49,13 +49,13 @@ io.on("connection", (socket) => {
   //     .to(room)
   //     .emit("update_canvas", { canvasData: canvasData, id: socket.id });
   // });
-  socket.on("mousedown", (room, x, y) => {
-    socket.broadcast.to(room).emit("onmousedown", { x, y });
-  });
+  // socket.on("mousedown", (room, x, y) => {
+  //   socket.broadcast.to(room).emit("onmousedown", { x, y });
+  // });
 
-  socket.on("drawing", (room, x, y, color) => {
-    if (!x || !y) return;
-    socket.broadcast.to(room).emit("ondraw", { x, y, color });
+  socket.on("drawing", (room, data, color) => {
+    if (!data.x1 || !data.y1 || !data.x2 || !data.y2) return;
+    socket.broadcast.to(room).emit("ondraw", data, color);
   });
 
   socket.on("clear", (room) => {
