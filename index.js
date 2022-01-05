@@ -53,13 +53,17 @@ io.on("connection", (socket) => {
     socket.broadcast.to(room).emit("onmousedown", { x, y });
   });
 
-  socket.on("drawing", (room, x, y) => {
+  socket.on("drawing", (room, x, y, color) => {
     if (!x || !y) return;
-    socket.broadcast.to(room).emit("ondraw", { x, y });
+    socket.broadcast.to(room).emit("ondraw", { x, y, color });
   });
 
   socket.on("clear", (room) => {
     socket.broadcast.to(room).emit("onclear");
+  });
+
+  socket.on("bgcolor", (room, color) => {
+    socket.broadcast.to(room).emit("bgcolorchange", color);
   });
 
   socket.on("disconnecting", () => {
