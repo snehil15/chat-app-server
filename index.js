@@ -41,13 +41,25 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("user_left", data.username);
   });
 
-  socket.on("drawing", ({ updatedState, room }) => {
-    JSON.parse(updatedState).lines.length == 0
-      ? (canvasData = [updatedState])
-      : canvasData.push(updatedState);
-    socket.volatile
-      .to(room)
-      .emit("update_canvas", { canvasData: canvasData, id: socket.id });
+  // socket.on("drawing", ({ updatedState, room }) => {
+  //   JSON.parse(updatedState).lines.length == 0
+  //     ? (canvasData = [updatedState])
+  //     : canvasData.push(updatedState);
+  //   socket.volatile
+  //     .to(room)
+  //     .emit("update_canvas", { canvasData: canvasData, id: socket.id });
+  // });
+  socket.on("mousedown", (room, x, y) => {
+    socket.broadcast.to(room).emit("onmousedown", { x, y });
+  });
+
+  socket.on("drawing", (room, x, y) => {
+    if (!x || !y) return;
+    socket.broadcast.to(room).emit("ondraw", { x, y });
+  });
+
+  socket.on("clear", (room) => {
+    socket.broadcast.to(room).emit("onclear");
   });
 
   socket.on("disconnecting", () => {
