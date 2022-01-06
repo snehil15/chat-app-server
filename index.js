@@ -53,9 +53,9 @@ io.on("connection", (socket) => {
   //   socket.broadcast.to(room).emit("onmousedown", { x, y });
   // });
 
-  socket.on("drawing", (room, data, color) => {
+  socket.on("drawing", (room, data, color, brushSize) => {
     if (!data.x1 || !data.y1 || !data.x2 || !data.y2) return;
-    socket.broadcast.to(room).emit("ondraw", data, color);
+    socket.broadcast.to(room).emit("ondraw", data, color, brushSize);
   });
 
   socket.on("clear", (room) => {
