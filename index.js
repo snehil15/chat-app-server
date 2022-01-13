@@ -41,18 +41,6 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("user_left", data.username);
   });
 
-  // socket.on("drawing", ({ updatedState, room }) => {
-  //   JSON.parse(updatedState).lines.length == 0
-  //     ? (canvasData = [updatedState])
-  //     : canvasData.push(updatedState);
-  //   socket.volatile
-  //     .to(room)
-  //     .emit("update_canvas", { canvasData: canvasData, id: socket.id });
-  // });
-  // socket.on("mousedown", (room, x, y) => {
-  //   socket.broadcast.to(room).emit("onmousedown", { x, y });
-  // });
-
   socket.on("drawing", (room, data, color, brushSize) => {
     if (!data.x1 || !data.y1 || !data.x2 || !data.y2) return;
     socket.broadcast.to(room).emit("ondraw", data, color, brushSize);
@@ -74,22 +62,6 @@ io.on("connection", (socket) => {
     delete users[socket.id];
   });
 });
-
-// const tictactoeio = io.of("/tictac");
-
-// tictactoeio.on("connection", (socket) => {
-//   // console.log(socket.id);
-//   socket.on("join_room", async () => {
-//     if (
-//       tictactoeio.adapter.rooms.get("abc") &&
-//       tictactoeio.adapter.rooms.get("abc").size >= 2
-//     ) {
-//       return;
-//     }
-//     socket.join("abc");
-//     // console.log(`user with id ${socket.id} joined room abc`);
-//   });
-// });
 
 server.listen(port, () => {
   console.log("Server running");
